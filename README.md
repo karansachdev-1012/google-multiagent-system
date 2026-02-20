@@ -1,15 +1,135 @@
-# Google Agent Development Kit (ADK) Workshop
+# Advanced Multi-Agent System with Google ADK
 
-Build AI agents with Google's Agent Development Kit! In this workshop, you'll progressively build a Research Agent, starting from a simple single agent and evolving to a multi-agent hierarchical system.
+A comprehensive AI agent system featuring 25+ specialized agents, advanced security measures, intelligent multi-domain query handling, and robust tool integrations. This system demonstrates enterprise-grade AI agent development with Google ADK.
 
-## Workshop Overview
+## System Overview
 
-| Exercise | Description | Skills Learned |
-|----------|-------------|----------------|
-| **Exercise 1** | Simple Single Agent | ADK basics, Agent class, deployment |
-| **Exercise 2** | Agent with Tools | Custom function tools, web scraping |
-| **Exercise 3** | Multi-Agent Research Team | AgentTool pattern, orchestration, sub-agents |
-| **Exercise 4** | Agent Evaluation | Eval framework, rubric-based metrics, prompt engineering |
+| Component | Description |
+|-----------|-------------|
+| **25+ Specialized Agents** | Domain-specific agents covering research, shopping, travel, coding, finance, health, education, entertainment, legal, cooking, fitness, weather, news, translation, math/science, career, real estate, sports, pets, astrology, dating, technology |
+| **Multi-Domain Routing** | Intelligent agent selection for queries asking about multiple topics (e.g., "weather AND flights") |
+| **Advanced Security** | Rate limiting, content filtering, input validation, and error handling |
+| **Token Tracking** | Real-time token usage monitoring and optimization |
+| **Robust Tool Integrations** | Free APIs (Open-Meteo, Semantic Scholar, TheMealDB) with multiple fallbacks |
+| **Enhanced Error Handling** | Never fail silently - always provide useful fallback data or search URLs |
+
+## Architecture Diagram
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                        USER QUERY                                    │
+│  "weather in Sydney tomorrow and flights from Chicago to Sydney"     │
+└─────────────────────────────────────────────────────────────────────┘
+                                 │
+                                 ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                    ROOT AGENT (Orchestrator)                         │
+│  • Analyzes query for multiple topics                               │
+│  • Routes to MULTIPLE agents for multi-domain queries               │
+│  • weather_agent + travelling_agent (for the example above)        │
+└─────────────────────────────────────────────────────────────────────┘
+                                 │
+              ┌──────────────────────┴──────────────────────┐
+              │                                             │
+              ▼                                             ▼
+┌─────────────────────────────┐           ┌─────────────────────────────┐
+│     WEATHER AGENT         │           │    TRAVELLING AGENT       │
+│ • Uses Open-Meteo API    │           │ • Parses "from X to Y"   │
+│ • Free, no API key       │           │ • Returns search URLs    │
+│ • Falls back to wttr.in  │           │ • Skyscanner, Kiwi.com   │
+└─────────────────────────────┘           └─────────────────────────────┘
+              │                                             │
+              ▼                                             ▼
+┌─────────────────────────────┐           ┌─────────────────────────────┐
+│   get_weather_data tool   │           │  search_travel_sites tool │
+│ • Nominatim geocoding     │           │ • Parses query patterns   │
+│ • Open-Meteo forecast     │           │ • Returns direct URLs     │
+│ • City coordinates fallback│           │ • Travel tips included   │
+└─────────────────────────────┘           └─────────────────────────────┘
+```
+
+## Key Features
+
+### 🔥 Multi-Domain Query Handling
+When a user asks about MULTIPLE DIFFERENT THINGS, the system NOW calls MULTIPLE agents:
+
+- "weather in Sydney AND flights to London" → weather_agent + travelling_agent
+- "restaurants AND price comparison" → restaurant_agent + shopping_agent
+- "research topic AND verify facts" → researcher + fact_checker + critic
+
+### 🌤️ Weather Tool (Enhanced)
+- Uses **Open-Meteo API** (FREE, no API key required)
+- Falls back to **wttr.in** if Open-Meteo fails
+- Falls back to **hardcoded city coordinates** as last resort
+- Returns useful search URLs if all APIs fail
+
+### ✈️ Travel Tool (Enhanced)
+- Parses "from X to Y" patterns from queries
+- Extracts travel dates (march, april, etc.)
+- Extracts trip duration ("atleast 20 days", "20+ days")
+- Returns direct search URLs:
+  - Skyscanner
+  - Kiwi.com
+  - Expedia
+  - Google Flights
+
+## Agent Capabilities
+
+### Core Research & Analysis (4 agents)
+- **Researcher**: Broad information gathering and synthesis
+- **Fact Checker**: Claim verification and source validation
+- **Critic**: Analysis and identification of weaknesses
+- **News Agent**: Current events and journalistic analysis
+
+### Commerce & Lifestyle (8 agents)
+- **Shopping Agent**: Product research and price comparison
+- **Travel Agent**: Trip planning, flight search, hotel booking
+- **Cooking Agent**: Recipes and culinary guidance
+- **Entertainment Agent**: Media recommendations and reviews
+- **Restaurant Agent**: Dining recommendations and reservations
+- **Real Estate Agent**: Property listings and market analysis
+- **Sports Agent**: Sports news and scores
+- **Pets Agent**: Pet care information
+
+### Professional & Personal Development (4 agents)
+- **Finance Agent**: Investment advice and financial planning
+- **Career Agent**: Job search and professional development
+- **Education Agent**: Learning resources and study strategies
+- **Fitness Agent**: Workout planning and exercise guidance
+
+### Specialized Services (9 agents)
+- **Coding Agent**: Programming help and code generation
+- **Legal Agent**: Legal information and resource provision
+- **Health Agent**: Wellness guidance and health information
+- **Math/Science Agent**: Calculations and scientific explanations
+- **Weather Agent**: Forecasts and climate data (Open-Meteo API)
+- **Translation Agent**: Language translation and cultural adaptation
+- **Astrology Agent**: Horoscopes and zodiac readings
+- **Dating Agent**: Dating advice and relationship tips
+- **Technology Agent**: Tech news and gadget reviews
+
+### Utility Agent (1 agent)
+- **Tools Agent**: Access to all custom tools (fetch, search, calculate, etc.)
+
+## Custom Tools
+
+| Tool | Purpose | API/Integration |
+|------|---------|-----------------|
+| `fetch_webpage` | Extract and summarize content from URLs | BeautifulSoup web scraping - **Agents can now fetch actual content from URLs instead of just providing links** |
+| `get_weather_data` | Weather information | **Open-Meteo API** (FREE, no key) |
+| `search_travel_sites` | Flight/hotel search | Skyscanner, Kiwi.com, Expedia URLs |
+| `search_restaurants` | Restaurant search | Yelp API / scraping |
+| `search_shopping_sites` | Product search | eBay API / Google Shopping |
+| `search_news` | News aggregation | GNews API / Google News RSS |
+| `search_academic_papers` | Academic research | Semantic Scholar API |
+| `search_recipe_database` | Recipe search | TheMealDB API |
+| `search_code_repositories` | Code search | GitHub API |
+| `search_financial_data` | Stock/crypto data | Yahoo Finance |
+| `translate_text` | Language translation | LibreTranslate |
+| `calculate_math` | Mathematical computation | Safe eval |
+| `search_jobs` | Job opportunities | Adzuna API / Indeed |
+| `search_medical_info` | Medical research | PubMed |
+| `search_legal_resources` | Legal information | Justia |
 
 ## Prerequisites
 
@@ -19,112 +139,127 @@ Build AI agents with Google's Agent Development Kit! In this workshop, you'll pr
 
 ## Quick Start
 
-### 1. Clone and Setup
-
-```bash
-# Clone the repository
+```
+bash
+# Clone repository
 git clone <repository-url>
-cd adk-workshop-q126
-
-# Create your workshop branch (use your name)
-git checkout -b workshop/<your-name>
+cd google-multiagent-system
 
 # Create virtual environment
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+source venv/bin/activate  # Windows: venv\Scripts\activate
 
 # Install dependencies
 pip install -r requirements.txt
 
-# Copy environment template and add your API key
-cp .env.example .env
+# Run the system
+python main.py
 ```
 
-Edit `.env` and add your `GOOGLE_API_KEY`.
+Access the web interface at `http://localhost:8080`
 
-### 2. Run Locally
+## Example Queries
 
-```bash
-adk web
-```
+### Single Domain (1 agent)
+- "What's the weather in Sydney?" → weather_agent
+- "Find me restaurants in Chicago" → restaurant_agent
 
-Open http://localhost:8080 to interact with your agent.
+### Multi-Domain (2+ agents!)
+- "What's the weather in Sydney and flights to London?" → weather_agent + travelling_agent
+- "Find restaurants and compare prices" → restaurant_agent + shopping_agent
 
-### 3. Deploy
+### Complex Research (3+ agents)
+- "Research climate change and verify the facts" → researcher + fact_checker + critic
 
-```bash
-git add .
-git commit -m "My research agent"
-git push -u origin workshop/<your-name>
-```
+## Security & Robustness Features
 
-Your agent will automatically deploy to Cloud Run.
+### 🔒 Security Measures
+- **Rate Limiting**: Configurable request limits per user
+- **Content Filtering**: Automatic detection of harmful content
+- **Input Validation**: Length limits and sanitization
+- **Error Handling**: Graceful failure recovery with user-friendly messages
 
-## Your Deployment URL
+### 🛡️ Robustness Features
+- **Multiple Fallbacks**: Weather API fails → try wttr.in → try coordinates
+- **Useful Errors**: Never just say "error" - provide search URLs as fallback
+- **Agent Fallbacks**: If one agent fails, system tries alternatives
+- **Query Parsing**: Extracts meaningful parts from complex queries
 
-After pushing, your agent will be available at:
-
-```
-https://<your-name>-adk-workshop-773815123342.us-central1.run.app
-```
-
-For example, branch `workshop/sam-gallagher` deploys to:
-```
-https://sam-gallagher-adk-workshop-773815123342.us-central1.run.app
-```
-
-## Exercises
-
-Work through each exercise in order. Instructions are provided during the workshop.
-
-### Exercise 1: Simple Single Agent
-
-Create a basic research agent in `research_agent/agent.py`.
-
-**Goal:** Define an `Agent` with a name, model, description, and instruction.
-
-### Exercise 2: Agent with Tools
-
-Extend your agent with a custom `fetch_webpage` tool for web research.
-
-**Goal:** Build a custom function tool and attach it to an agent.
-
-### Exercise 3: Multi-Agent Research Team
-
-Build a research team using the `AgentTool` pattern where an orchestrator coordinates specialized sub-agents.
-
-**Goal:** Create an orchestrator that delegates to researcher, fact_checker, and critic agents.
-
-```
-research_orchestrator (root)
-├── researcher     (AgentTool) — web research via Google Search
-├── fact_checker   (AgentTool) — independent claim verification
-└── critic         (AgentTool) — identifies weaknesses and gaps
-```
-
-### Exercise 4: Agent Evaluation
-
-Use ADK's evaluation framework to measure how prompt engineering affects agent quality. Run the same eval suite against a flawed agent and a fixed agent.
-
-**Goal:** Run `adk eval`, interpret rubric-based metrics, and see how prompt changes improve scores.
-
-See [solutions/exercise_4/INSTRUCTIONS.md](solutions/exercise_4/INSTRUCTIONS.md) for detailed instructions.
-
-## Resources
-
-- [ADK Documentation](https://google.github.io/adk-docs/)
-- [ADK Python GitHub](https://github.com/google/adk-python)
-- [Gemini API](https://ai.google.dev/)
+### 📊 Token Tracking
+- **Real-time Monitoring**: Live token usage per agent and query
+- **Cost Optimization**: Automatic selection of most efficient agent combinations
 
 ## Troubleshooting
 
 | Issue | Solution |
 |-------|----------|
-| Agent returns `None` | Ensure `root_agent` is defined (not `None`) in `agent.py` |
-| Tools not working | Check that tool functions have proper docstrings and type hints |
-| Deployment fails | Check GitHub Actions logs; ensure branch matches `workshop/*` |
-| API key errors | Verify `GOOGLE_API_KEY` is set in `.env` |
+| Weather returns error | Check network; tool has fallbacks but may need internet |
+| Flight search returns URLs only | Direct flight APIs require authentication; URLs provided instead |
+| Agent returns generic error | Check that agent tools are properly configured |
+| Multi-domain query uses only 1 agent | Ensure root_agent has updated instructions for multi-domain |
 
-## Need Help?
+## System Flow for User Query
 
-Ask your workshop facilitator or check the `solutions/` folder for reference implementations.
+For query: **"weather in australia sydney tomorrow and can you let me know flights from chicago to sydney the cheapest one between march to april to and fro for atleast 20 days travel"**
+
+```
+1. Root Agent analyzes query
+   → Identifies MULTIPLE topics: weather + flights
+   
+2. Root Agent calls BOTH:
+   - weather_agent → get_weather_data("Sydney, Australia")
+   - travelling_agent → search_travel_sites(query)
+   
+3. Weather Agent result:
+   - Location: Sydney, Australia
+   - Temperature: XX°C (from Open-Meteo)
+   - Condition: sunny/cloudy/rainy
+   - Forecast: next 7 days
+   
+4. Travelling Agent result:
+   - From: Chicago
+   - To: Sydney
+   - Dates: March-April
+   - Duration: 20+ days
+   - Search URLs: Skyscanner, Kiwi.com, etc.
+   
+5. Final response combines both results!
+```
+
+## License
+
+This project is part of the Google ADK workshop series.
+
+## Contributing
+
+1. Follow the existing agent pattern for new agents
+2. Add appropriate security measures
+3. Include comprehensive error handling with fallbacks
+4. Update documentation and tests
+5. Ensure token efficiency
+
+---
+
+**Note**: This system has been enhanced with:
+- Better multi-domain query handling
+- Improved weather API with multiple fallbacks
+- Enhanced travel tool with direct search URLs
+- Never-fail error handling with useful fallbacks
+- **Web scraping capability** - Agents now fetch ACTUAL content from URLs instead of just providing links!
+
+## 🔧 Web Scraping Feature (Important!)
+
+When agents return search results with URLs, they now use the `fetch_webpage` tool to:
+1. Fetch the actual content from those URLs
+2. Extract and summarize the relevant information
+3. Provide specific answers rather than just links
+
+### Example:
+**Before**: Agent would say "Here's some legal information: [list of URLs]"
+
+**Now**: Agent will:
+1. Search for legal information
+2. Fetch content from the most relevant URLs
+3. Provide the **actual visa requirements** or legal information
+
+This applies to all research agents including legal, travelling, shopping, restaurant, cooking, fitness, and more!

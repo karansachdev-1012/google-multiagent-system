@@ -47,4 +47,8 @@ Thumbs.db
 sessions.db
 *.db
 
+# Keys
+AIzaSyDAui9dBOlgRBOdLK9engnCv3If4tYG_I4
+.env
+
 sessions/
